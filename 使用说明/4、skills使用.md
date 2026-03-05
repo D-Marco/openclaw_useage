@@ -24,6 +24,28 @@ clawhub install <skill-slug>
 
 安装的 skills 会在 ~/.openclaw/workspace/skills 目录下
 
+另外一种安装方式是通过npx skills add  命令来安装，它适用于包括openclaw、codex、claude code 等
+
+```shell
+npx skills add https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-image-gen
+```
+
+有可能会失败，可以设置代理：
+
+```shell
+npm config set proxy http://127.0.0.1:7890
+npm config set https-proxy http://127.0.0.1:7890
+git config --global http.proxy http://127.0.0.1:7890
+git config --global https.proxy http://127.0.0.1:7890
+export HTTP_PROXY=http://127.0.0.1:7890
+export HTTPS_PROXY=http://127.0.0.1:7890
+export ALL_PROXY=http://127.0.0.1:7890
+```
+
+其中，<https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-image-gen> 可以是某一个skill的github地址
+
+
+
 ## 更新所有 skills
 
 ```shell
@@ -65,6 +87,12 @@ metadata:
 ```shell
 echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
 ```
+
+## skill分类
+
+- 内置skill
+- workspace目录下的skills目录，专属某个agent的skills
+- 和workspace同级目录的skills目录，这是全局skill，默认没有这个文件夹 通过npx skills add 就会生成这个目录
 
 ## 自定义 skill
 
