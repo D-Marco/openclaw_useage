@@ -1,10 +1,10 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.3",
-    "lastTouchedAt": "2026-03-05T10:03:34.323Z"
+    "lastTouchedAt": "2026-03-06T10:11:25.914Z"
   },
   "wizard": {
-    "lastRunAt": "2026-03-04T02:18:00.942Z",
+    "lastRunAt": "2026-03-06T10:11:25.910Z",
     "lastRunVersion": "2026.3.3",
     "lastRunCommand": "onboard",
     "lastRunMode": "local"
@@ -17,7 +17,20 @@
       }
     }
   },
-   "models": {
+  "channels": {
+    "telegram": {
+      "enabled": true,
+       "groupPolicy": "open",
+      "botToken": "8652028645:AAEXRPQGsNEZu9UKCBChvz31oMKOI7RarnY",
+      "dmPolicy": "pairing",
+      "groups": {
+        "*": {
+          "requireMention": true
+        }
+       }
+     }
+  },
+ "models": {
     "mode": "merge",
     "providers": {
       "vllm": {
@@ -57,17 +70,8 @@
     }
   },
   "tools": {
-    "profile": "full"
+    "profile": "messaging"
   },
-  "bindings": [
-    {
-      "agentId": "main",
-      "match": {
-        "channel": "feishu",
-        "accountId": "default"
-      }
-    }
-  ],
   "messages": {
     "ackReactionScope": "group-mentions"
   },
@@ -80,32 +84,16 @@
   "session": {
     "dmScope": "per-channel-peer"
   },
-  "channels": {
-    "feishu": {
-      "enabled": true,
-      "appId": "cli_a9238b867df9dcb5",
-      "appSecret": "bbBc1qmVqn0E25fyXrkKnbiBKPs84feV",
-      "connectionMode": "websocket",
-      "domain": "feishu",
-      "groupPolicy": "open"
-    }
-  },
   "gateway": {
     "port": 18789,
     "mode": "local",
     "bind": "loopback",
-    "controlUi": {
-      "allowedOrigins": [
-        "https://lane-standard-pc-i440fx-piix-1996.tail35535c.ts.net"
-      ]
-    },
     "auth": {
       "mode": "token",
-      "token": "f220bb2e3a49a553de1522f7189c897da3a03fca10a89faa",
-      "allowTailscale": true
+      "token": "3f038b53b79468e7f11175fa7e8c1a3a55075ac83f783429"
     },
     "tailscale": {
-      "mode": "serve",
+      "mode": "off",
       "resetOnExit": false
     },
     "nodes": {
@@ -118,20 +106,6 @@
         "reminders.add",
         "sms.send"
       ]
-    }
-  },
-  "skills": {
-    "entries": {
-      "gog": {
-        "enabled": false
-      }
-    }
-  },
-  "plugins": {
-    "entries": {
-      "feishu": {
-        "enabled": true
-      }
     }
   }
 }
