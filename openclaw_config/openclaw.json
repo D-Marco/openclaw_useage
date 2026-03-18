@@ -1,36 +1,11 @@
 {
-  "meta": {
-    "lastTouchedVersion": "2026.3.3",
-    "lastTouchedAt": "2026-03-06T10:11:25.914Z"
-  },
   "wizard": {
-    "lastRunAt": "2026-03-06T10:11:25.910Z",
-    "lastRunVersion": "2026.3.3",
+    "lastRunAt": "2026-03-18T09:26:15.467Z",
+    "lastRunVersion": "2026.3.13",
     "lastRunCommand": "onboard",
     "lastRunMode": "local"
   },
-  "auth": {
-    "profiles": {
-      "moonshot:default": {
-        "provider": "moonshot",
-        "mode": "api_key"
-      }
-    }
-  },
-  "channels": {
-    "telegram": {
-      "enabled": true,
-       "groupPolicy": "open",
-      "botToken": "8652028645:AAEXRPQGsNEZu9UKCBChvz31oMKOI7RarnY",
-      "dmPolicy": "pairing",
-      "groups": {
-        "*": {
-          "requireMention": true
-        }
-       }
-     }
-  },
- "models": {
+  "models": {
     "mode": "merge",
     "providers": {
       "vllm": {
@@ -70,10 +45,7 @@
     }
   },
   "tools": {
-    "profile": "messaging"
-  },
-  "messages": {
-    "ackReactionScope": "group-mentions"
+    "profile": "coding"
   },
   "commands": {
     "native": "auto",
@@ -90,7 +62,7 @@
     "bind": "loopback",
     "auth": {
       "mode": "token",
-      "token": "3f038b53b79468e7f11175fa7e8c1a3a55075ac83f783429"
+      "token": "4d78b356b0323930f770d8f9c6b82265af5ce844e4f144c84b4d415a2563bd19"
     },
     "tailscale": {
       "mode": "off",
@@ -107,5 +79,9 @@
         "sms.send"
       ]
     }
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.3.13",
+    "lastTouchedAt": "2026-03-18T09:26:15.483Z"
   }
 }

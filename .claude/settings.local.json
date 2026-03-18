@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.openclaw.ai)",
+      "Bash(ssh:*)",
+      "Bash(xargs grep:*)"
+    ]
+  }
+}
