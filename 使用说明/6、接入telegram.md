@@ -1,7 +1,5 @@
 # 接入telegram
 
-
-
 # 一、创建 Telegram Bot（获取 token）
 
 1. 打开 Telegram
@@ -57,11 +55,34 @@
 关键字段说明：
 
 | 字段                    | 作用                  |
-| --------------------- | ------------------- |
+|-----------------------|---------------------|
 | enabled               | 启用 telegram channel |
 | botToken              | BotFather 给你的 token |
 | dmPolicy              | DM 默认需要配对           |
 | groups.requireMention | 群里必须 @bot 才回复       |
+
+**重点：通过这种方式创建的机器人，整个telegram网络上的人都可以使用这个机器人，这样显然不安全，为了安全起见，现面介绍的配置中，有说到默认是开启
+pairing 模式的，所以其他人如果想要用这个机器人，对它说话，我们的 openclaw 上就可以看到哪些人有申请 ，通过 openclaw pairing
+list telegram 查看的到**
+
+另外也可以创建多个bot， 不管是不是同一个人创建的。创建完后,openclaw的配置大概如下
+
+```json
+  {
+  "channels": {
+    "telegram": {
+      "accounts": {
+        "personal": {
+          "botToken": "111111:AAAAxxxxxx"
+        },
+        "work": {
+          "botToken": "222222:BBBByyyyyy"
+        }
+      }
+    }
+  }
+}
+```
 
 OpenClaw 通过 Telegram Bot API 与 Telegram 通信。 ([OpenClaw][2])
 
@@ -142,7 +163,9 @@ OpenClaw 会回复。
   "channels": {
     "telegram": {
       "botToken": "...",
-      "ownerIds": ["你的telegram用户ID"]
+      "ownerIds": [
+        "你的telegram用户ID"
+      ]
     }
   }
 }

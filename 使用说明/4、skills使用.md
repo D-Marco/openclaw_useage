@@ -91,7 +91,7 @@ echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
 ## skill分类
 
 - 内置skill
-- workspace目录下的skills目录，专属某个agent的skills
+- ~/.openclaw/workspace/目录下的skills目录，开发中/自定义技能
 - 和workspace同级目录的skills目录，这是全局skill，默认没有这个文件夹 通过npx skills add 就会生成这个目录
 
 ## 自定义 skill

@@ -3,7 +3,12 @@
     "allow": [
       "WebFetch(domain:docs.openclaw.ai)",
       "Bash(ssh:*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -s https://api.github.com/repos/VoltAgent/awesome-openclaw-skills/contents/)",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(f[''''name'''']\\) for f in data]\")",
+      "WebFetch(domain:api.github.com)"
     ]
   }
 }

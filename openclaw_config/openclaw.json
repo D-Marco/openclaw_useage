@@ -1,9 +1,21 @@
 {
+  "meta": {
+    "lastTouchedVersion": "2026.3.3",
+    "lastTouchedAt": "2026-03-19T07:29:40.284Z"
+  },
   "wizard": {
-    "lastRunAt": "2026-03-18T09:26:15.467Z",
-    "lastRunVersion": "2026.3.13",
+    "lastRunAt": "2026-03-06T10:11:25.910Z",
+    "lastRunVersion": "2026.3.3",
     "lastRunCommand": "onboard",
     "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "moonshot:default": {
+        "provider": "moonshot",
+        "mode": "api_key"
+      }
+    }
   },
   "models": {
     "mode": "merge",
@@ -42,10 +54,33 @@
       "compaction": {
         "mode": "safeguard"
       }
-    }
+    },
+    "list": [
+      {
+        "id": "main"
+      },
+      {
+        "id": "coder_be",
+        "name": "coder_be",
+        "workspace": "/home/lane/.openclaw/workspace-coder_be",
+        "agentDir": "/home/lane/.openclaw/agents/coder_be/agent"
+      },
+      {
+        "id": "coder_fe",
+        "name": "coder_fe",
+        "workspace": "/home/lane/.openclaw/workspace-coder_fe",
+        "agentDir": "/home/lane/.openclaw/agents/coder_fe/agent",
+        "tools":{
+     	  "profile":"minimal"
+        }
+      }
+    ]
   },
   "tools": {
     "profile": "coding"
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
   },
   "commands": {
     "native": "auto",
@@ -56,13 +91,27 @@
   "session": {
     "dmScope": "per-channel-peer"
   },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "botToken": "8652028645:AAEXRPQGsNEZu9UKCBChvz31oMKOI7RarnY",
+      "groups": {
+        "*": {
+          "requireMention": true
+        }
+      },
+      "groupPolicy": "open",
+      "streaming": "partial"
+    }
+  },
   "gateway": {
     "port": 18789,
     "mode": "local",
     "bind": "loopback",
     "auth": {
       "mode": "token",
-      "token": "4d78b356b0323930f770d8f9c6b82265af5ce844e4f144c84b4d415a2563bd19"
+      "token": "3f038b53b79468e7f11175fa7e8c1a3a55075ac83f783429"
     },
     "tailscale": {
       "mode": "off",
@@ -79,9 +128,5 @@
         "sms.send"
       ]
     }
-  },
-  "meta": {
-    "lastTouchedVersion": "2026.3.13",
-    "lastTouchedAt": "2026-03-18T09:26:15.483Z"
   }
 }
