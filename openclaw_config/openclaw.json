@@ -1,21 +1,13 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.3",
-    "lastTouchedAt": "2026-03-19T07:29:40.284Z"
+    "lastTouchedVersion": "2026.3.23",
+    "lastTouchedAt": "2026-03-24T14:50:29.087Z"
   },
   "wizard": {
-    "lastRunAt": "2026-03-06T10:11:25.910Z",
-    "lastRunVersion": "2026.3.3",
+    "lastRunAt": "2026-03-24T14:20:41.573Z",
+    "lastRunVersion": "2026.3.23",
     "lastRunCommand": "onboard",
     "lastRunMode": "local"
-  },
-  "auth": {
-    "profiles": {
-      "moonshot:default": {
-        "provider": "moonshot",
-        "mode": "api_key"
-      }
-    }
   },
   "models": {
     "mode": "merge",
@@ -50,37 +42,72 @@
       "model": {
         "primary": "vllm/Qwen3.5-27B"
       },
-      "workspace": "/home/lane/.openclaw/workspace",
-      "compaction": {
-        "mode": "safeguard"
-      }
+      "workspace": "/home/lane/.openclaw/workspace"
     },
     "list": [
       {
         "id": "main"
       },
       {
-        "id": "coder_be",
-        "name": "coder_be",
-        "workspace": "/home/lane/.openclaw/workspace-coder_be",
-        "agentDir": "/home/lane/.openclaw/agents/coder_be/agent"
+        "id": "fe_coder",
+        "name": "fe_coder",
+        "mentionPatterns": [
+          "@fe_coder",
+          "@前端工程师"
+        ],
+        "tools": {
+          "profile": "coding",
+          "agentToAgent": {
+            "enabled": true,
+            "allow": [
+            ]
+          }
+        },
+        "workspace": "/home/lane/.openclaw/workspace-fe_coder",
+        "agentDir": "/home/lane/.openclaw/agents/fe_coder/agent"
       },
       {
-        "id": "coder_fe",
-        "name": "coder_fe",
-        "workspace": "/home/lane/.openclaw/workspace-coder_fe",
-        "agentDir": "/home/lane/.openclaw/agents/coder_fe/agent",
-        "tools":{
-     	  "profile":"minimal"
+        "id": "be_coder",
+        "name": "后端工程师",
+        "workspace": "/home/lane/.openclaw/workspace-be_coder",
+        "mentionPatterns": [
+          "@be_coder",
+          "@后端工程师"
+        ],
+        "agentDir": "/home/lane/.openclaw/agents/be_coder/agent",
+        "tools": {
+          "profile": "coding",
+          "agentToAgent": {
+            "enabled": true,
+            "allow": [
+              "fe_coder"
+            ]
+          }
+        }
+      },
+      {
+        "id": "sys_arch",
+        "name": "系统架构师",
+        "mentionPatterns": [
+          "@sys_arch",
+          "@系统架构师"
+        ],
+        "workspace": "/home/lane/.openclaw/workspace-sys_arch",
+        "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent",
+        "tools": {
+          "profile": "coding",
+          "agentToAgent": {
+            "enabled": true,
+            "allow": [
+              "be_coder"
+            ]
+          }
         }
       }
     ]
   },
   "tools": {
     "profile": "coding"
-  },
-  "messages": {
-    "ackReactionScope": "group-mentions"
   },
   "commands": {
     "native": "auto",
@@ -92,17 +119,16 @@
     "dmScope": "per-channel-peer"
   },
   "channels": {
-    "telegram": {
+    "feishu": {
       "enabled": true,
       "dmPolicy": "pairing",
-      "botToken": "8652028645:AAEXRPQGsNEZu9UKCBChvz31oMKOI7RarnY",
-      "groups": {
-        "*": {
-          "requireMention": true
+      "accounts": {
+        "main": {
+          "appId": "cli_a94b09487df8dcb6",
+          "appSecret": "r6rTBtUWJhYVtCt1JWxCWeELSa6PQlUL",
+          "name": "My AI assistant"
         }
-      },
-      "groupPolicy": "open",
-      "streaming": "partial"
+      }
     }
   },
   "gateway": {
@@ -111,7 +137,7 @@
     "bind": "loopback",
     "auth": {
       "mode": "token",
-      "token": "3f038b53b79468e7f11175fa7e8c1a3a55075ac83f783429"
+      "token": "e141795001b5d35fbc5dd7a29b6085b2303dceb40b083f5e"
     },
     "tailscale": {
       "mode": "off",
@@ -127,6 +153,13 @@
         "reminders.add",
         "sms.send"
       ]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "feishu": {
+        "enabled": true
+      }
     }
   }
 }
