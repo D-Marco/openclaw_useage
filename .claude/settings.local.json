@@ -8,7 +8,11 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(curl -s https://api.github.com/repos/VoltAgent/awesome-openclaw-skills/contents/)",
       "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(f[''''name'''']\\) for f in data]\")",
-      "WebFetch(domain:api.github.com)"
+      "WebFetch(domain:api.github.com)",
+      "Bash(find /d/git_res/lw_openclaw -type f \\\\\\(-name *.py -o -name *.js -o -name *.ts -o -name *.json \\\\\\))",
+      "Bash(grep -r \"call_agent\\\\|callAgent\\\\|invokeAgent\\\\|invoke_agent\\\\|agent_call\" /d/git_res/lw_openclaw --include=*.ts --include=*.tsx --include=*.js --include=*.md)",
+      "Bash(xargs ls:*)",
+      "Bash(grep:*)"
     ]
   }
 }

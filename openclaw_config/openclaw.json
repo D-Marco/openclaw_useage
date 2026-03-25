@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.23",
+    "lastTouchedAt": "2026-03-24T14:50:29.087Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-24T14:20:41.573Z",
+    "lastRunVersion": "2026.3.23",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "vllm": {
+        "baseUrl": "http://117.147.213.234:18803/v1",
+        "apiKey": "dummy",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Qwen3.5-27B",
+            "name": "Qwen3.5-27B (vLLM)",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 131072,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "vllm/Qwen3.5-27B"
+      },
+      "workspace": "/home/lane/.openclaw/workspace"
+    },
+    "list": [
+      {
+        "id": "main"
+      },
+      {
+        "id": "fe_coder",
+        "mentionPatterns": [
+          "@fe_coder",
+          "@前端工程师"
+        ],
+        "tools": {
+          "profile": "coding",
+          "agentToAgent": {
+            "enabled": true,
+            "allow": [
+              "sys_arch",
+              "be_coder"
+            ]
+          }
+        },
+        "name": "fe_coder",
+        "workspace": "/home/lane/.openclaw/workspace-fe_coder",
+        "agentDir": "/home/lane/.openclaw/agents/fe_coder/agent"
+      },
+      {
+        "id": "be_coder",
+        "name": "be_coder",
+        "mentionPatterns": [
+          "@be_coder",
+          "@后端工程师"
+        ],
+        "workspace": "/home/lane/.openclaw/workspace-be_coder",
+        "agentDir": "/home/lane/.openclaw/agents/be_coder/agent",
+        "tools": {
+          "profile": "coding",
+          "agentToAgent": {
+            "enabled": true,
+            "allow": [
+              "sys_arch",
+              "fe_coder"
+            ]
+          }
+        }
+      },
+      {
+        "id": "sys_arch",
+        "name": "sys_arch",
+        "mentionPatterns": [
+          "@sys_arch",
+          "@系统架构师"
+        ],
+        "workspace": "/home/lane/.openclaw/workspace-sys_arch",
+        "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent",
+        "tools": {
+          "profile": "coding",
+          "agentToAgent": {
+            "enabled": true,
+            "allow": [
+              "be_coder",
+              "fe_coder"
+            ]
+          }
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "comment": "飞书群聊消息统一进入多智能体路由（由 mentionPatterns 决定具体 agent）",
+        "agentId": "sys_arch",
+        "match": {
+          "channel": "feishu",
+          "accountId": "main"
+        }
+      }
+    ]
+  },
+  "tools": {
+    "profile": "coding"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "accounts": {
+        "main": {
+          "appId": "cli_a94b09487df8dcb6",
+          "appSecret": "r6rTBtUWJhYVtCt1JWxCWeELSa6PQlUL",
+          "name": "My AI assistant"
+        }
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "e141795001b5d35fbc5dd7a29b6085b2303dceb40b083f5e"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "contacts.add",
+        "calendar.add",
+        "reminders.add",
+        "sms.send"
+      ]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "feishu": {
+        "enabled": true
+      }
+    }
+  }
+}
