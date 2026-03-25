@@ -1,10 +1,10 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.3",
-    "lastTouchedAt": "2026-03-05T07:51:28.874Z"
+    "lastTouchedAt": "2026-03-19T07:29:40.284Z"
   },
   "wizard": {
-    "lastRunAt": "2026-03-04T02:18:00.942Z",
+    "lastRunAt": "2026-03-06T10:11:25.910Z",
     "lastRunVersion": "2026.3.3",
     "lastRunCommand": "onboard",
     "lastRunMode": "local"
@@ -54,10 +54,30 @@
       "compaction": {
         "mode": "safeguard"
       }
-    }
+    },
+    "list": [
+      {
+        "id": "main"
+      },
+      {
+        "id": "coder_be",
+        "name": "coder_be",
+        "workspace": "/home/lane/.openclaw/workspace-coder_be",
+        "agentDir": "/home/lane/.openclaw/agents/coder_be/agent"
+      },
+      {
+        "id": "coder_fe",
+        "name": "coder_fe",
+        "workspace": "/home/lane/.openclaw/workspace-coder_fe",
+        "agentDir": "/home/lane/.openclaw/agents/coder_fe/agent",
+        "tools":{
+     	  "profile":"minimal"
+        }
+      }
+    ]
   },
   "tools": {
-    "profile": "messaging"
+    "profile": "coding"
   },
   "messages": {
     "ackReactionScope": "group-mentions"
@@ -75,13 +95,13 @@
     "telegram": {
       "enabled": true,
       "dmPolicy": "pairing",
-      "botToken": "8794478435:AAGpv87tuLOEemwvCHZSQ3WSnG4ZE6gWYj4",
+      "botToken": "8652028645:AAEXRPQGsNEZu9UKCBChvz31oMKOI7RarnY",
       "groups": {
         "*": {
           "requireMention": true
         }
       },
-      "groupPolicy": "allowlist",
+      "groupPolicy": "open",
       "streaming": "partial"
     }
   },
@@ -89,18 +109,12 @@
     "port": 18789,
     "mode": "local",
     "bind": "loopback",
-    "controlUi": {
-      "allowedOrigins": [
-        "https://lane-standard-pc-i440fx-piix-1996.tail35535c.ts.net"
-      ]
-    },
     "auth": {
       "mode": "token",
-      "token": "f220bb2e3a49a553de1522f7189c897da3a03fca10a89faa",
-      "allowTailscale": true
+      "token": "3f038b53b79468e7f11175fa7e8c1a3a55075ac83f783429"
     },
     "tailscale": {
-      "mode": "serve",
+      "mode": "off",
       "resetOnExit": false
     },
     "nodes": {
@@ -113,35 +127,6 @@
         "reminders.add",
         "sms.send"
       ]
-    }
-  },
-  "skills": {
-    "entries": {
-      "gog": {
-        "enabled": false
-      }
-    }
-  },
-  "plugins": {
-    "entries": {
-      "feishu": {
-        "enabled": true
-      }
-    },
-    "installs": {
-      "feishu": {
-        "source": "npm",
-        "spec": "@openclaw/feishu",
-        "installPath": "/home/lane/.openclaw/extensions/feishu",
-        "version": "2026.3.2",
-        "resolvedName": "@openclaw/feishu",
-        "resolvedVersion": "2026.3.2",
-        "resolvedSpec": "@openclaw/feishu@2026.3.2",
-        "integrity": "sha512-CpwjmLCS8gpZ5fFCRiEA+1i/L+E73Vhz5//TiwQjWJOtVPZEu44db294g3HUR6nB5L0IEpZgKU/JU69HgYl77w==",
-        "shasum": "ad77e27633b480f5c815e1922252a2f07c1765bd",
-        "resolvedAt": "2026-03-05T07:51:20.720Z",
-        "installedAt": "2026-03-05T07:51:25.228Z"
-      }
     }
   }
 }

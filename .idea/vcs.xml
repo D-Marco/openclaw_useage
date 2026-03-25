@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/awesome_openclaw_skills/awesome-openclaw-skills" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/openclaw" vcs="Git" />
   </component>
 </project>

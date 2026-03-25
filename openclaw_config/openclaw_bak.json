@@ -77,7 +77,7 @@
     ]
   },
   "tools": {
-    "profile": "full"
+    "profile": "coding"
   },
   "messages": {
     "ackReactionScope": "group-mentions"
@@ -95,7 +95,7 @@
     "telegram": {
       "enabled": true,
       "dmPolicy": "pairing",
-      "botToken": "8592097083:AAEKab20aWpiKiFWDfphs2GzIvDgiDfPAck",
+      "botToken": "8652028645:AAEXRPQGsNEZu9UKCBChvz31oMKOI7RarnY",
       "groups": {
         "*": {
           "requireMention": true
@@ -140,6 +140,13 @@
         "reminders.add",
         "sms.send"
       ]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "feishu": {
+        "enabled": true
+      }
     }
   }
 }
