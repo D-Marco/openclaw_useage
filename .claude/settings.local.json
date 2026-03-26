@@ -12,7 +12,23 @@
       "Bash(find /d/git_res/lw_openclaw -type f \\\\\\(-name *.py -o -name *.js -o -name *.ts -o -name *.json \\\\\\))",
       "Bash(grep -r \"call_agent\\\\|callAgent\\\\|invokeAgent\\\\|invoke_agent\\\\|agent_call\" /d/git_res/lw_openclaw --include=*.ts --include=*.tsx --include=*.js --include=*.md)",
       "Bash(xargs ls:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "WebSearch",
+      "WebFetch(domain:stevekinney.com)",
+      "WebFetch(domain:mcpcat.io)",
+      "WebFetch(domain:ai2sql.io)",
+      "WebFetch(domain:www.xugj520.cn)",
+      "Bash(cd /d)",
+      "Bash(find . -type f -name *.ts)",
+      "Bash(find /d/git_res/lw_openclaw -path */src/* -name *.ts -type f -exec grep -l dispatchReplyFromConfig {})",
+      "Bash(2)",
+      "Bash(head -c 65000 \"D:\\\\git_res\\\\lw_openclaw\\\\openclaw\\\\extensions\\\\feishu\\\\src\\\\bot.ts\")",
+      "WebFetch(domain:zhuanlan.zhihu.com)",
+      "WebFetch(domain:open.feishu.cn)",
+      "Bash(ls -la \"D:\\\\git_res\\\\lw_openclaw\\\\openclaw\\\\src\\\\commands\\\\channels\"\" | grep -E \"status)",
+      "Bash(log \")",
+      "Bash(xargs basename:*)",
+      "Bash(ls D:/git_res/lw_openclaw/openclaw/src/cli/*.ts)"
     ]
   }
 }

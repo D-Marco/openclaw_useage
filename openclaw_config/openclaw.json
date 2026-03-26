@@ -50,19 +50,8 @@
       },
       {
         "id": "fe_coder",
-        "mentionPatterns": [
-          "@fe_coder",
-          "@前端工程师"
-        ],
         "tools": {
-          "profile": "coding",
-          "agentToAgent": {
-            "enabled": true,
-            "allow": [
-              "sys_arch",
-              "be_coder"
-            ]
-          }
+          "profile": "coding"
         },
         "name": "fe_coder",
         "workspace": "/home/lane/.openclaw/workspace-fe_coder",
@@ -71,55 +60,63 @@
       {
         "id": "be_coder",
         "name": "be_coder",
-        "mentionPatterns": [
-          "@be_coder",
-          "@后端工程师"
-        ],
         "workspace": "/home/lane/.openclaw/workspace-be_coder",
-        "agentDir": "/home/lane/.openclaw/agents/be_coder/agent",
-        "tools": {
-          "profile": "coding",
-          "agentToAgent": {
-            "enabled": true,
-            "allow": [
-              "sys_arch",
-              "fe_coder"
-            ]
-          }
-        }
+        "agentDir": "/home/lane/.openclaw/agents/be_coder/agent"
       },
       {
         "id": "sys_arch",
         "name": "sys_arch",
-        "mentionPatterns": [
-          "@sys_arch",
-          "@系统架构师"
-        ],
         "workspace": "/home/lane/.openclaw/workspace-sys_arch",
-        "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent",
-        "tools": {
-          "profile": "coding",
-          "agentToAgent": {
-            "enabled": true,
-            "allow": [
-              "be_coder",
-              "fe_coder"
-            ]
-          }
-        }
-      }
-    ],
-    "bindings": [
-      {
-        "comment": "飞书群聊消息统一进入多智能体路由（由 mentionPatterns 决定具体 agent）",
-        "agentId": "sys_arch",
-        "match": {
-          "channel": "feishu",
-          "accountId": "main"
-        }
+        "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent"
       }
     ]
   },
+  "bindings": [
+    {
+      "comment": "系统设计群 → sys_arch",
+      "agentId": "sys_arch",
+      "match": {
+        "channel": "feishu",
+        "accountId": "main",
+        "peer": {
+          "kind": "group",
+          "id": "oc_bece3c64707219266c19b7c7741d4cbd"
+        }
+      }
+    },
+    {
+      "comment": "后端开发群 → be_coder",
+      "agentId": "be_coder",
+      "match": {
+        "channel": "feishu",
+        "accountId": "main",
+        "peer": {
+          "kind": "group",
+          "id": "oc_fa8e76f11225c3dc5443df5ba4b8480b"
+        }
+      }
+    },
+    {
+      "comment": "前端开发群 → fe_coder",
+      "agentId": "fe_coder",
+      "match": {
+        "channel": "feishu",
+        "accountId": "main",
+        "peer": {
+          "kind": "group",
+          "id": "oc_7e88b3a3aec12d9fd6d4d5e8d6ba7be5"
+        }
+      }
+    },
+    {
+      "comment": "兜底 → main（私聊及未匹配任何群的消息由默认 agent 处理）",
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        "accountId": "main"
+      }
+    }
+  ],
   "tools": {
     "profile": "coding"
   },
