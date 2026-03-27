@@ -106,114 +106,89 @@ curl -X GET "https://open.feishu.cn/open-apis/im/v1/chats" \
 
 ### 步骤 3：修改 openclaw.json
 
-将 `agents` 和顶层 `tools` 部分替换为以下配置：
+在 `openclaw.json` 中修改 `agents`、`bindings`、`tools` 三个字段：
 
 ```json
-{
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "vllm/Qwen3.5-27B"
-      },
-      "workspace": "/home/lane/.openclaw/workspace",
-      "compaction": {
-        "mode": "safeguard"
-      }
-    },
-    "list": [
-      {
-        "id": "sys_arch",
-        "name": "系统架构师",
-        "tools": {
-          "profile": "coding"
-        }
-      },
-      {
-        "id": "be_coder",
-        "name": "后端工程师",
-        "tools": {
-          "profile": "coding"
-        }
-      },
-      {
-        "id": "fe_coder",
-        "name": "前端工程师",
-        "tools": {
-          "profile": "coding"
-        }
-      },
-      {
-        "id": "main",
-        "name": "默认助手"
-      }
-    ]
+"agents": {
+  "defaults": {
+    "model": { "primary": "vllm/Qwen3.5-27B" },
+    "workspace": "/home/lane/.openclaw/workspace",
+    "compaction": { "mode": "safeguard" }
   },
-  "bindings": [
+  "list": [
     {
-      "comment": "系统设计群 → sys_arch",
-      "agentId": "sys_arch",
-      "match": {
-        "channel": "feishu",
-        "accountId": "main",
-        "peer": {
-          "kind": "group",
-          "id": "<系统设计群-group-id>"
-        }
-      }
+      "id": "sys_arch",
+      "name": "系统架构师",
+      "workspace": "/home/lane/.openclaw/workspace-sys_arch",
+      "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent",
+      "tools": { "profile": "coding" }
     },
     {
-      "comment": "后端开发群 → be_coder",
-      "agentId": "be_coder",
-      "match": {
-        "channel": "feishu",
-        "accountId": "main",
-        "peer": {
-          "kind": "group",
-          "id": "<后端开发群-group-id>"
-        }
-      }
+      "id": "be_coder",
+      "name": "后端工程师",
+      "workspace": "/home/lane/.openclaw/workspace-be_coder",
+      "agentDir": "/home/lane/.openclaw/agents/be_coder/agent",
+      "tools": { "profile": "coding" }
     },
     {
-      "comment": "前端开发群 → fe_coder",
-      "agentId": "fe_coder",
-      "match": {
-        "channel": "feishu",
-        "accountId": "main",
-        "peer": {
-          "kind": "group",
-          "id": "<前端开发群-group-id>"
-        }
-      }
+      "id": "fe_coder",
+      "name": "前端工程师",
+      "workspace": "/home/lane/.openclaw/workspace-fe_coder",
+      "agentDir": "/home/lane/.openclaw/agents/fe_coder/agent",
+      "tools": { "profile": "coding" }
     },
-    {
-      "comment": "兜底 → main（私聊及未匹配任何群的消息由默认 agent 处理）",
-      "agentId": "main",
-      "match": {
-        "channel": "feishu",
-        "accountId": "main"
-      }
-    }
+    { "id": "main", "name": "默认助手" }
   ]
-}
-```
-
-> **说明**：
-> - `peer.id` 替换为步骤 2 中获取的飞书群 Group ID（格式 `oc_xxxxxxxx`）
-> - `agentToAgent`（agent 间互调权限）属于**顶层 `tools` 字段**，不在 per-agent 的 `tools` 里（源码 `AgentToolsConfig` 不含该字段，Zod schema 使用 `.strict()` 会拒绝未知字段）
-> - Binding 模式下无需 `groupChat.mentionPatterns`，路由完全由群组 ID 决定
-> - 群聊中必须 @ 机器人才会触发响应（OpenClaw 默认 `requireMention: true`）
-> - 最后一条无 `peer` 的兜底 binding 用于处理私聊及未匹配群的消息，路由到 `main` agent
-
-在顶层还需补充 `tools` 配置以开启 agent 间互调：
-
-```json
+},
+"bindings": [
+  {
+    "comment": "系统设计群 → sys_arch",
+    "agentId": "sys_arch",
+    "match": {
+      "channel": "feishu",
+      "accountId": "main",
+      "peer": { "kind": "group", "id": "<系统设计群-group-id>" }
+    }
+  },
+  {
+    "comment": "后端开发群 → be_coder",
+    "agentId": "be_coder",
+    "match": {
+      "channel": "feishu",
+      "accountId": "main",
+      "peer": { "kind": "group", "id": "<后端开发群-group-id>" }
+    }
+  },
+  {
+    "comment": "前端开发群 → fe_coder",
+    "agentId": "fe_coder",
+    "match": {
+      "channel": "feishu",
+      "accountId": "main",
+      "peer": { "kind": "group", "id": "<前端开发群-group-id>" }
+    }
+  },
+  {
+    "comment": "兜底 → main（私聊及未匹配任何群的消息由默认 agent 处理）",
+    "agentId": "main",
+    "match": { "channel": "feishu", "accountId": "main" }
+  }
+],
 "tools": {
+  "profile": "coding",
   "agentToAgent": {
     "enabled": true,
     "allow": ["sys_arch", "be_coder", "fe_coder"]
   }
 }
 ```
+
+> **重要说明**：
+> - `bindings` 是顶层字段，与 `agents` 平级，**不在 `agents` 内部**
+> - `agentToAgent` 必须在顶层 `tools` 中配置，per-agent 的 `tools` 不支持该字段（源码 `AgentToolsConfig` Zod schema 用 `.strict()` 会拒绝未知字段）
+> - **`agentToAgent.enabled: true` 是 agent 间互调的开关**，缺少此配置时 `sessions_send` 工具调用会静默返回 `{"status":"forbidden"}`，LLM 会继续生成文字假装成功，实际 be_coder 未被唤起
+> - `peer.id` 替换为步骤 2 中获取的飞书群 Group ID（格式 `oc_xxxxxxxx`）
+> - 群聊中必须 @ 机器人才会触发响应（OpenClaw 默认 `requireMention: true`）
 
 ### 步骤 4：为每个智能体配置人格（SOUL.md）
 
@@ -333,7 +308,12 @@ cat > ~/.openclaw/workspace-sys_arch/SOUL.md << 'EOF'
 - 全部使用 Markdown 格式
 - 代码块指定语言（sql / typescript / python / bash 等）
 - 表格对齐整洁
-- 三类文档全部输出完毕后，将功能说明文档、后端架构设计文档、前端架构设计文档一并传递，调用 be_coder 开始实现；fe_coder 由 be_coder 在完成接口设计文档后调用，无需 sys_arch 直接调用
+- 三类文档全部输出完毕后，**必须调用 `sessions_send` 工具**通知 be_coder 开始工作，参数如下：
+  - `sessionKey`: `"agent:be_coder:main"`
+  - `message`: 将功能说明文档、后端架构设计文档、前端架构设计文档的完整内容拼接后作为消息体传入
+  - 不要只传 `agentId`；当前 `sessions_send` 实现要求使用 `sessionKey` 或 `label`
+- **严禁使用 `sessions_spawn`**：该工具用于创建隔离子进程，在飞书群聊中会报错，不能用于跨 agent 通信
+- fe_coder 由 be_coder 在完成接口设计文档后通过 `sessions_send` 调用，sys_arch 无需直接调用 fe_coder
 EOF
 ```
 
@@ -376,7 +356,11 @@ cat > ~/.openclaw/workspace-be_coder/SOUL.md << 'EOF'
 实现每个功能时，对照功能说明文档中的操作流程、表结构和表间业务逻辑，确保代码逻辑与文档保持一致。
 代码需包含必要的注释、错误处理和参数校验（使用 Spring Validation）。
 
-以上三项全部完成后，将接口设计文档、功能说明文档、前端架构设计文档一并传递，调用 fe_coder 开始实现前端页面。
+以上三项全部完成后，**必须调用 `sessions_send` 工具**通知 fe_coder 开始工作，参数如下：
+- `sessionKey`: `"agent:fe_coder:main"`
+- `message`: 将接口设计文档、功能说明文档、前端架构设计文档的完整内容拼接后作为消息体传入
+
+**严禁使用 `sessions_spawn`**：该工具在飞书群聊中会报错，不能用于跨 agent 通信。
 EOF
 ```
 
@@ -441,11 +425,11 @@ openclaw agents list --bindings
         │ bindings 匹配 group id → 路由给 sys_arch
         │ sys_arch 按 SOUL.md 生成三类文档
         │
-        │ sessions_send(agentId="be_coder", ...)  ← 内部调用，不经过飞书
+│ sessions_send(sessionKey="agent:be_coder:main", ...)  ← 内部调用，不经过飞书
         ↓
     be_coder 生成接口设计文档 + init.sql + 业务代码
         │
-        │ sessions_send(agentId="fe_coder", ...)  ← 内部调用，不经过飞书
+│ sessions_send(sessionKey="agent:fe_coder:main", ...)  ← 内部调用，不经过飞书
         ↓
     fe_coder 实现前端页面
         │
@@ -634,10 +618,25 @@ tail -f ~/.openclaw/logs/openclaw.log | grep -E "sessions-send|inter_session|be_
       "compaction": { "mode": "safeguard" }
     },
     "list": [
-      { "id": "sys_arch", "name": "系统架构师", "tools": { "profile": "coding" } },
-      { "id": "be_coder",  "name": "后端工程师",  "tools": { "profile": "coding" } },
-      { "id": "fe_coder",  "name": "前端工程师",  "tools": { "profile": "coding" } },
-      { "id": "main",      "name": "默认助手" }
+      {
+        "id": "sys_arch", "name": "系统架构师",
+        "workspace": "/home/lane/.openclaw/workspace-sys_arch",
+        "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent",
+        "tools": { "profile": "coding" }
+      },
+      {
+        "id": "be_coder", "name": "后端工程师",
+        "workspace": "/home/lane/.openclaw/workspace-be_coder",
+        "agentDir": "/home/lane/.openclaw/agents/be_coder/agent",
+        "tools": { "profile": "coding" }
+      },
+      {
+        "id": "fe_coder", "name": "前端工程师",
+        "workspace": "/home/lane/.openclaw/workspace-fe_coder",
+        "agentDir": "/home/lane/.openclaw/agents/fe_coder/agent",
+        "tools": { "profile": "coding" }
+      },
+      { "id": "main", "name": "默认助手" }
     ],
     "bindings": [
       {
@@ -732,9 +731,35 @@ tail -f ~/.openclaw/logs/openclaw.log | grep -E "sessions-send|inter_session|be_
 2. **API 接口**：获取 `tenant_access_token` 后调用 `GET https://open.feishu.cn/open-apis/im/v1/chats`，从返回的 `chat_id` 字段取值
 3. **开放平台调试台**：登录 [open.feishu.cn](https://open.feishu.cn) → 你的应用 →「API 调试台」→ 搜索「获取群列表」直接运行
 
+### Q: sys_arch 回复说"已分配给 be_coder"，但 be_coder 的 .jsonl 文件里没有收到任何消息？
+
+查看 sys_arch 的 `.jsonl` 文件，确认实际调用的工具名称：
+
+**情况一：调用的是 `sessions_spawn`（最常见）**
+
+`sessions_spawn` 是创建隔离子进程的工具，不是跨 agent 通信工具。在飞书群聊中调用会报错：
+
+```
+"Feishu current-conversation binding is only available in direct messages or topic conversations."
+```
+
+LLM 收到此错误后不会中止，而是继续生成文字假装成功。
+
+**修复**：在 SOUL.md 中明确写明使用 `sessions_send` 工具并提供参数示例，同时禁止使用 `sessions_spawn`。重新写入 SOUL.md 后执行 `openclaw restart`。
+
+**情况二：调用的是 `sessions_send` 但返回 `{"status":"forbidden"}`**
+
+这是 `agentToAgent` 未启用导致的静默失败。检查顶层 `tools` 中是否有：
+
+```json
+"agentToAgent": { "enabled": true, "allow": ["sys_arch", "be_coder", "fe_coder"] }
+```
+
+`agentToAgent` 必须在**顶层 `tools`** 中，不能放在 per-agent 的 `tools` 里。修复后执行 `openclaw restart`。
+
 ### Q: 智能体之间无法互相调用？
 
-**A**: 确认双方的 `agentToAgent.allow` 列表中都包含了对方的 `id`，且 `enabled: true`。
+**A**: 确认顶层 `tools.agentToAgent.enabled` 为 `true`，且 `allow` 列表中包含了需要互调的所有 agent id。
 
 ### Q: 三个智能体会共享对话历史吗？
 

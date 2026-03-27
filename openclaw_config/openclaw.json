@@ -60,12 +60,18 @@
       {
         "id": "be_coder",
         "name": "be_coder",
+        "tools": {
+          "profile": "coding"
+        },
         "workspace": "/home/lane/.openclaw/workspace-be_coder",
         "agentDir": "/home/lane/.openclaw/agents/be_coder/agent"
       },
       {
         "id": "sys_arch",
         "name": "sys_arch",
+        "tools": {
+          "profile": "coding"
+        },
         "workspace": "/home/lane/.openclaw/workspace-sys_arch",
         "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent"
       }
@@ -118,7 +124,14 @@
     }
   ],
   "tools": {
-    "profile": "coding"
+    "profile": "coding",
+    "sessions": {
+      "visibility": "all"
+    },
+    "agentToAgent": {
+      "enabled": true,
+      "allow": ["sys_arch", "be_coder", "fe_coder"]
+    }
   },
   "commands": {
     "native": "auto",
@@ -127,6 +140,7 @@
     "ownerDisplay": "raw"
   },
   "session": {
+    "mainKey": "main",
     "dmScope": "per-channel-peer"
   },
   "channels": {
