@@ -28,7 +28,8 @@
       "Bash(ls -la \"D:\\\\git_res\\\\lw_openclaw\\\\openclaw\\\\src\\\\commands\\\\channels\"\" | grep -E \"status)",
       "Bash(log \")",
       "Bash(xargs basename:*)",
-      "Bash(ls D:/git_res/lw_openclaw/openclaw/src/cli/*.ts)"
+      "Bash(ls D:/git_res/lw_openclaw/openclaw/src/cli/*.ts)",
+      "Bash(ls -la /d/git_res/my_projects/openclaw_useage/openclaw/extensions/feishu/src/*.ts)"
     ]
   }
 }
