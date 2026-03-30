@@ -247,6 +247,10 @@ cat > ~/.openclaw/workspace-$agent/AGENTS.md << 'AGENTSEOF'
 
 所有生成的文档和源码**必须写入工作区磁盘**，禁止仅在聊天中输出而不落盘。
 
+- 文件落盘优先使用 `exec` 工具完成，默认不要使用 `write` 工具写长文档、长 SQL 或大段源码
+- 推荐使用 `exec` 执行 `mkdir -p`、shell 重定向、`cat <<'EOF'`、`cat >> file <<'EOF'` 等方式创建和追加文件
+- 当模型为 `vllm/Qwen` 且 API 为 `openai-completions` 时，更应避免使用 `write`，因为 tool-call 参数容易中途损坏并触发 `terminated`
+
 - 文档统一存放：`output/docs/` 目录
 - 源码统一存放：`output/src/` 目录
 - SQL 文件存放：`output/sql/` 目录
@@ -254,15 +258,11 @@ cat > ~/.openclaw/workspace-$agent/AGENTS.md << 'AGENTSEOF'
 
 ## 飞书群聊通知规则
 
-完成文档或代码后，必须通过 `message` 工具的 `sendAttachment` 动作将文件发送到飞书群聊，示例：
-
-```
-工具: message
-参数:
-  action: "sendAttachment"
-  media: "<文件绝对路径>"
-  filename: "<文件名>"
-```
+- 如果你是被用户在飞书群直接 @ 的 agent（飞书绑定 session），可以用 `message` 工具的 `sendAttachment` 动作发文件到群聊
+- 如果你是被 `sessions_send` 调起的 agent（运行在内部通道），**不能**用 `message sendAttachment` 发文件到飞书群（会路由到内部通道）。此时应：
+  1. 将文件写入磁盘
+  2. 在 announce 回复中报告文件绝对路径
+  3. 由飞书绑定 session 中的 agent（如 sys_arch）代为发送文件到群聊
 
 ## Agent 间通信规则
 
@@ -271,6 +271,7 @@ cat > ~/.openclaw/workspace-$agent/AGENTS.md << 'AGENTSEOF'
   `"功能说明文档已生成，路径：/home/lane/.openclaw/workspace-sys_arch/output/docs/功能说明.md，请读取后开始工作"`
 - 遇到问题时可主动向相关 agent 询问，三个 agent 两两均可通信
 - sessions_send 参数格式：`sessionKey: "agent:<target_agent_id>:main"`
+- **禁止向发起方回调 sessions_send**：当你是被 sessions_send 调用的目标 agent 时，不要再用 sessions_send 反向通知发起方。announce 机制会自动将你的摘要回传到发起方的飞书群聊。反向回调会创建不绑定飞书的孤立 session，导致消息丢失
 
 ## 安全红线
 
