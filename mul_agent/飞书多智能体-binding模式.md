@@ -150,77 +150,108 @@ curl -X GET "https://open.feishu.cn/open-apis/im/v1/chats" \
 在 `openclaw.json` 中修改 `agents`、`bindings`、`tools` 三个字段：
 
 ```json
-"agents": {
-"defaults": {
-"model": {"primary": "vllm/Qwen3.5-27B"},
-"workspace": "/home/lane/.openclaw/workspace",
-"compaction": {"mode": "safeguard"}
-},
-"list": [
 {
-"id": "sys_arch",
-"name": "系统架构师",
-"workspace": "/home/lane/.openclaw/workspace-sys_arch",
-"agentDir": "/home/lane/.openclaw/agents/sys_arch/agent",
-"tools": {"profile": "coding"}
-},
-{
-"id": "be_coder",
-"name": "后端工程师",
-"workspace": "/home/lane/.openclaw/workspace-be_coder",
-"agentDir": "/home/lane/.openclaw/agents/be_coder/agent",
-"tools": {"profile": "coding"}
-},
-{
-"id": "fe_coder",
-"name": "前端工程师",
-"workspace": "/home/lane/.openclaw/workspace-fe_coder",
-"agentDir": "/home/lane/.openclaw/agents/fe_coder/agent",
-"tools": {"profile": "coding"}
-},
-{"id": "main", "name": "默认助手"}
-]
-},
-"bindings": [
-{
-"comment": "系统设计群 → sys_arch",
-"agentId": "sys_arch",
-"match": {
-"channel": "feishu",
-"accountId": "main",
-"peer": {"kind": "group", "id": "<系统设计群-group-id>"}
-}
-},
-{
-"comment": "后端开发群 → be_coder",
-"agentId": "be_coder",
-"match": {
-"channel": "feishu",
-"accountId": "main",
-"peer": {"kind": "group", "id": "<后端开发群-group-id>"}
-}
-},
-{
-"comment": "前端开发群 → fe_coder",
-"agentId": "fe_coder",
-"match": {
-"channel": "feishu",
-"accountId": "main",
-"peer": {"kind": "group", "id": "<前端开发群-group-id>"}
-}
-},
-{
-"comment": "兜底 → main（私聊及未匹配任何群的消息由默认 agent 处理）",
-"agentId": "main",
-"match": {"channel": "feishu", "accountId": "main"}
-}
-],
-"tools": {
-"profile": "coding",
-"agentToAgent": {
-"enabled": true,
-"allow": ["sys_arch", "be_coder", "fe_coder"]
-}
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "vllm/Qwen3.5-27B"
+      },
+      "workspace": "/home/lane/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      }
+    },
+    "list": [
+      {
+        "id": "sys_arch",
+        "name": "系统架构师",
+        "workspace": "/home/lane/.openclaw/workspace-sys_arch",
+        "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent",
+        "tools": {
+          "profile": "full"
+        }
+      },
+      {
+        "id": "be_coder",
+        "name": "后端工程师",
+        "workspace": "/home/lane/.openclaw/workspace-be_coder",
+        "agentDir": "/home/lane/.openclaw/agents/be_coder/agent",
+        "tools": {
+          "profile": "coding"
+        }
+      },
+      {
+        "id": "fe_coder",
+        "name": "前端工程师",
+        "workspace": "/home/lane/.openclaw/workspace-fe_coder",
+        "agentDir": "/home/lane/.openclaw/agents/fe_coder/agent",
+        "tools": {
+          "profile": "coding"
+        }
+      },
+      {
+        "id": "main",
+        "name": "默认助手"
+      }
+    ]
+  },
+  "bindings": [
+    {
+      "comment": "系统设计群 → sys_arch",
+      "agentId": "sys_arch",
+      "match": {
+        "channel": "feishu",
+        "accountId": "main",
+        "peer": {
+          "kind": "group",
+          "id": "<系统设计群-group-id>"
+        }
+      }
+    },
+    {
+      "comment": "后端开发群 → be_coder",
+      "agentId": "be_coder",
+      "match": {
+        "channel": "feishu",
+        "accountId": "main",
+        "peer": {
+          "kind": "group",
+          "id": "<后端开发群-group-id>"
+        }
+      }
+    },
+    {
+      "comment": "前端开发群 → fe_coder",
+      "agentId": "fe_coder",
+      "match": {
+        "channel": "feishu",
+        "accountId": "main",
+        "peer": {
+          "kind": "group",
+          "id": "<前端开发群-group-id>"
+        }
+      }
+    },
+    {
+      "comment": "兜底 → main（私聊及未匹配任何群的消息由默认 agent 处理）",
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        "accountId": "main"
+      }
+    }
+  ],
+  "tools": {
+    "profile": "coding",
+    "agentToAgent": {
+      "enabled": true,
+      "allow": [
+        "sys_arch",
+        "be_coder",
+        "fe_coder"
+      ]
+    }
+  }
 }
 ```
 
@@ -229,7 +260,7 @@ curl -X GET "https://open.feishu.cn/open-apis/im/v1/chats" \
 > - `agentToAgent` 必须在顶层 `tools` 中配置，per-agent 的 `tools` 不支持该字段（源码 `AgentToolsConfig` Zod schema 用
     `.strict()` 会拒绝未知字段）
 > - **`agentToAgent.enabled: true` 是 agent 间互调的开关**，缺少此配置时 `sessions_send` 工具调用会静默返回
-    `{"status":"forbidden"}`，LLM 会继续生成文字假装成功，实际 be_coder 未被唤起
+    `{"status": "forbidden"}`，LLM 会继续生成文字假装成功，实际 be_coder 未被唤起
 > - `allow` 列表中包含所有三个 agent id，使得它们可以**两两互相调用**
 > - `peer.id` 替换为步骤 2 中获取的飞书群 Group ID（格式 `oc_xxxxxxxx`）
 > - 群聊中必须 @ 机器人才会触发响应（OpenClaw 默认 `requireMention: true`）
@@ -253,32 +284,19 @@ curl -X GET "https://open.feishu.cn/open-apis/im/v1/chats" \
 
 #### 4.1 AGENTS.md（通用模板，三个 agent 相同）
 
-````bash
-# 为三个 agent 分别创建 AGENTS.md（内容相同）
-for agent in sys_arch be_coder fe_coder; do
-cat > ~/.openclaw/workspace-$agent/AGENTS.md << 'AGENTSEOF'
+````markdown
 # 操作规范
 
 ## 最高优先级：所有产出必须落盘
 
 所有生成的文档、SQL、源码和阶段汇报，必须先写入工作区磁盘，再在聊天中报告路径。
 
-- 文档统一存放：`output/docs/`
-- 源码统一存放：`output/src/`
-- SQL 文件存放：`output/sql/`
+- 文档统一存放：`output/{项目名称}/docs/`
+- 源码统一存放：`output/{项目名称}/src/`
+- SQL 文件存放：`output/{项目名称}/sql/`
 - 每次写入后，都要在消息中明确说明文件路径
 
-## 多 agent 协作模式：sys_arch 中心协调
-
-本模式采用中心协调的 supervisor workflow：
-
-- `sys_arch` 是唯一总协调者
-- `be_coder` 与 `fe_coder` 是专业执行者
-- 所有阶段成果、阻塞、澄清请求，都先回传给 `sys_arch`
-- 由 `sys_arch` 统一向飞书群同步当前进度
-
-默认不走 `be_coder -> fe_coder` 的主协作链路。
-后端阶段产出先回到 `sys_arch`，由 `sys_arch` 结合前端架构文档与当前进度，再分发给 `fe_coder`。
+其中，{项目名称} 需要替换为你取的项目名称
 
 ## Agent 间通信规则
 
@@ -305,53 +323,12 @@ cat > ~/.openclaw/workspace-$agent/AGENTS.md << 'AGENTSEOF'
 
 ```json
 {
-  "sessionKey": "<target-session-key>",
-  "message": "...",
-  "timeoutSeconds": 0
+"sessionKey": "<target-session-key>",
+"message": "...",
+"timeoutSeconds": 0
 }
 ```
 
-原因：
-
-- `sessions_send` 默认会同步等待目标 agent 完成
-- 默认等待时间大约 30 秒
-- 读取多份文档、生成长文档、连续 tool call 很容易超时
-- `timeoutSeconds: 0` 可把 `sessions_send` 当作异步投递，避免同步等待超时导致的误判
-
-## callback_session_key 规则
-
-`sys_arch` 在给其他 agent 派任务时，正文中必须显式写出：
-
-```text
-callback_session_key: <sys_arch 当前飞书绑定 session key>
-```
-
-worker 回传时：
-
-- 优先回传到这个 `callback_session_key`
-- 不要偷懒写成 `agent:sys_arch:main`
-- 不要假设 main session 会自动回到飞书群
-
-## 飞书群通知规则
-
-- 默认只有 `sys_arch` 负责向飞书群发送阶段进度摘要
-- 默认只有 `sys_arch` 负责将关键附件发送到飞书群
-- `be_coder` / `fe_coder` 的职责是：写文件到各自工作区，再把路径与摘要回传给 `sys_arch`
-
-## 协作状态记录
-
-`sys_arch` 每次收到阶段回传后，应更新一份 `output/docs/协作状态汇总.md`，记录：
-
-- 当前阶段
-- 负责 agent
-- 已完成产出
-- 下一步待办
-- 阻塞项
-
-这样既方便飞书群汇报，也方便中断后恢复。
-
-AGENTSEOF
-done
 ````
 
 #### 4.2 IDENTITY.md（各 agent 分别配置）
@@ -390,41 +367,30 @@ EOF
 收到需求时，按以下顺序执行：
 
 1. 生成三类设计文档：功能说明文档、后端架构设计、前端架构设计，并落盘到工作区
-2. 通过 `message` 工具的 `sendAttachment` 动作把文档发送到飞书群
-3. 更新 `output/docs/协作状态汇总.md`
-4. 通过 `sessions_send` 派发给 `be_coder` 开始后端阶段
-5. 接收 `be_coder` 的阶段回传，读取其产出文件，向飞书群同步进度
-6. 结合后端产出与前端架构设计，再派发给 `fe_coder`
-7. 接收 `fe_coder` 的阶段回传，读取其产出文件，向飞书群同步进度
-8. 最终汇总所有产出，给用户明确的完成说明
+2. 文档生成后，通过 `message` 工具的 `sendAttachment` 动作把文档发送到飞书群
+3. 通过 `sessions_send` 派发给 `be_coder` 开始后端阶段
+4. 接收 `be_coder` 的阶段回传，读取其产出文件，向飞书群同步进度，并把相应的文件发到飞书群供用户下载
+5. 结合后端产出与前端架构设计，再派发给 `fe_coder`
+6. 接收 `fe_coder` 的阶段回传，读取其产出文件，向飞书群同步进度,并把相应的文件发到飞书群供用户下载
+7. 最终汇总所有产出，给用户明确的完成说明
 
 ## 工具使用规范
 
-### 文档落盘路径
-
-- `/home/lane/.openclaw/workspace-sys_arch/output/docs/功能说明文档.md`
-- `/home/lane/.openclaw/workspace-sys_arch/output/docs/后端架构设计.md`
-- `/home/lane/.openclaw/workspace-sys_arch/output/docs/前端架构设计.md`
-- `/home/lane/.openclaw/workspace-sys_arch/output/docs/协作状态汇总.md`
-
 ### 派发给 be_coder
 
-派发后端阶段时：
+在满足以下条件后再派发给 `be_coder`:
 
-- 使用 `sessions_send`
-- **禁止使用 `sessions_spawn`**
-- 推荐使用 `timeoutSeconds: 0`
-- 正文中必须包含：
-  - 三份文档的绝对路径
-  - `callback_session_key: <当前 sys_arch 飞书绑定 session key>`
-  - 当前阶段目标
-  - 回传格式要求
+- 已生成功能说明文档、后端架构设计
+
+正文中至少包含：
+
+- 正文中要指明功能说明文档、后端架构设计的真实路径，而非文档内容
 
 ### 派发给 fe_coder
 
 在满足以下条件后再派发给 `fe_coder`：
 
-- 已收到 `be_coder` 的接口设计或可联调后端阶段成果
+- 已收到 `be_coder` 的接口设计文档
 - 已读取相关文档路径
 - 已向飞书群同步当前后端进度
 
@@ -433,25 +399,14 @@ EOF
 - 功能说明文档路径
 - 前端架构设计文档路径
 - 接口设计文档路径
-- 必要的后端实现路径
-- `callback_session_key`
 
 ### 接收阶段回传
 
 当收到 `be_coder` 或 `fe_coder` 的阶段回传时：
 
 1. 读取其报告的文件路径
-2. 更新 `output/docs/协作状态汇总.md`
-3. 向飞书群同步“哪个 agent 完成了什么阶段”
-4. 必要时发送附件
-5. 决定是继续派发下一阶段，还是请求用户确认
-
-## 关键约束
-
-- 你是唯一对外汇报者
-- 不依赖 announce 自动回飞书群作为主通知链路
-- 不省略 `callback_session_key`
-- 不让 be_coder 与 fe_coder 自行形成不可见的主协作链路
+2. 向飞书群同步“哪个 agent 完成了什么阶段” ， agent 要用中文名称，如 be_coder 对应后端工程师，fe_coder对应前端工程师
+3. 必须发送文件供下载
 
 ---
 
@@ -574,13 +529,13 @@ EOF
 - 全部使用 Markdown 格式
 - 代码块指定语言（sql / typescript / python / bash 等）
 - 表格对齐整洁
+
 ````
 
 #### 4.4 SOUL.md —— be_coder（后端工程师）
 
 ````markdown
 你是一位专业的后端工程师，擅长 API 设计、数据库设计和业务逻辑实现。
-你可以与 sys_arch 和 fe_coder 通信，但在本模式下你的阶段成果必须优先回传给 sys_arch。
 
 ## 核心职责
 
@@ -592,31 +547,22 @@ EOF
 
 - 功能说明文档
 - 后端架构设计文档
-- 前端架构设计文档
 
 ### 第二步：编写接口设计文档
 
-先输出接口设计文档并落盘到：
-
-- `/home/lane/.openclaw/workspace-be_coder/output/docs/接口设计文档.md`
-
-完成后，**先回传给 sys_arch，不直接通知 fe_coder**。
+完成后，**先回传给 sys_arch**。
 
 ### 第三步：生成数据库初始化文件
 
-输出数据库初始化 SQL 并落盘到：
+输出数据库初始化 SQL 并落盘
 
-- `/home/lane/.openclaw/workspace-be_coder/output/sql/init.sql`
-
-完成后，**先回传给 sys_arch，不直接通知 fe_coder**。
+完成后，**回传给 sys_arch**。
 
 ### 第四步：实现后端业务代码
 
-严格依据后端架构设计文档中的技术栈、目录结构、分层方案和编码规范逐一实现代码，写入：
+严格依据后端架构设计文档中的技术栈、目录结构、分层方案和编码规范逐一实现代码
 
-- `/home/lane/.openclaw/workspace-be_coder/output/src/`
-
-完成后，**先回传给 sys_arch，不直接通知 fe_coder**。
+**完成后，要对源码进行压缩成zip，然后回传给 sys_arch **。
 
 ### 第五步：阶段回传规则
 
@@ -628,29 +574,14 @@ EOF
 - 下一步建议
 - 阻塞项（如有）
 
-推荐使用：`sessions_send + timeoutSeconds: 0`
 
-如果 `sys_arch` 在派单正文里给了：
-
-- `callback_session_key: <...>`
-
-则优先回传到这个 key，而不是固定写死 `agent:sys_arch:main`。
-
-## 关键约束
-
-- 阶段完成时，优先回传 `sys_arch`
-- 对前端的正式派单由 `sys_arch` 负责
-- 如需技术澄清，可向 `sys_arch` 提问；必要时由 `sys_arch` 再转发给 `fe_coder`
-- 对长任务和阶段回传，优先使用 `timeoutSeconds: 0`
-- 不依赖 announce 自动回群
-- 不把阶段成果直接发给 `fe_coder` 作为主流程
 ````
 
 #### 4.5 SOUL.md —— fe_coder（前端工程师）
 
 ````markdown
 你是一位专业的前端工程师，擅长 React/Vue 组件开发、页面布局和交互逻辑。
-你可以与 sys_arch 和 be_coder 通信，但在本模式下你的阶段成果必须优先回传给 sys_arch。
+你可以与 sys_arch 通信。
 
 ## 核心职责
 
@@ -663,14 +594,10 @@ EOF
 - 功能说明文档
 - 前端架构设计文档
 - 接口设计文档
-- 必要时读取后端产出路径
 
 ### 第二步：实现前端代码并落盘
 
 严格依据前端架构设计文档规定的技术栈、目录结构、组件规范和状态管理方案逐一实现代码。
-代码写入：
-
-- `/home/lane/.openclaw/workspace-fe_coder/output/src/`
 
 默认使用 React + TypeScript + Ant Design，除非架构文档中另有指定。
 遇到需要后端接口的部分，严格对齐接口设计文档中的路径、请求参数和响应结构。
@@ -680,6 +607,8 @@ EOF
 
 完成页面开发、接口接入、阶段联调、或遇到阻塞时，都必须显式回传给 `sys_arch`。
 
+完成源码开发后，压缩源码为zip格式，回传给 sys_arch.
+
 回传至少包含：
 
 - 阶段状态
@@ -687,17 +616,6 @@ EOF
 - 产出路径
 - 待联调项 / 阻塞项
 
-推荐使用：`sessions_send + timeoutSeconds: 0`
-
-如果派单正文中带有 `callback_session_key`，优先回传到该 key。
-
-## 关键约束
-
-- 阶段成果优先回传 `sys_arch`
-- 不将正式阶段完成直接通知 `be_coder`
-- 如遇接口定义疑问，优先回传 `sys_arch`，由 `sys_arch` 统一协调
-- 对长任务和阶段回传，优先使用 `timeoutSeconds: 0`
-- 不依赖 announce 自动回群
 
 ````
 
@@ -728,12 +646,12 @@ openclaw agents list --bindings
 
 ## 三、在飞书群聊中使用
 
-| 使用方式 | 操作 | 实际处理 |
-|---|---|---|
+| 使用方式        | 操作                   | 实际处理                                                                                                                                                                  |
+|-------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 完整规划 + 自动实现 | 在**系统设计群** @ 机器人描述需求 | `sys_arch` 先产出需求与架构文档，并把后端阶段异步派发给 `be_coder`；`be_coder` 的阶段成果先回传给 `sys_arch`，再由 `sys_arch` 对外同步并派发前端阶段给 `fe_coder`；`fe_coder` 的阶段成果同样先回传 `sys_arch`，最后由 `sys_arch` 汇总 |
-| 直接让后端实现 | 在**后端开发群** @ 机器人描述需求 | `be_coder` 直接响应并在自己的工作区落盘产出；如需纳入总流程，应再由 `sys_arch` 统一协调 |
-| 直接让前端实现 | 在**前端开发群** @ 机器人描述需求 | `fe_coder` 直接响应并在自己的工作区落盘产出；如需纳入总流程，应再由 `sys_arch` 统一协调 |
-| 私聊机器人 | 直接私聊（无需 @） | `main` 处理兜底会话，不建议作为多 agent 主协作入口 |
+| 直接让后端实现     | 在**后端开发群** @ 机器人描述需求 | `be_coder` 直接响应并在自己的工作区落盘产出；如需纳入总流程，应再由 `sys_arch` 统一协调                                                                                                               |
+| 直接让前端实现     | 在**前端开发群** @ 机器人描述需求 | `fe_coder` 直接响应并在自己的工作区落盘产出；如需纳入总流程，应再由 `sys_arch` 统一协调                                                                                                               |
+| 私聊机器人       | 直接私聊（无需 @）           | `main` 处理兜底会话，不建议作为多 agent 主协作入口                                                                                                                                      |
 
 **使用示例**（在系统设计群发送）：
 
@@ -750,60 +668,6 @@ openclaw agents list --bindings
 
 ---
 
-## 四、运行链路
-
-```text
-用户在系统设计群 @ 机器人
-        ↓
-        ↓ bindings 匹配 group id → 路由给 sys_arch
-        ↓
-    sys_arch 生成三类文档
-        ├─ ① 写入磁盘 output/docs/*.md
-        ├─ ② message.sendAttachment → 飞书群聊（群成员可下载）
-        ├─ ③ 更新 output/docs/协作状态汇总.md
-        └─ ④ sessions_send(timeoutSeconds=0) → be_coder（传文件路径 + callback_session_key）
-        ↓
-    be_coder 读取文件 → 生成接口文档 / init.sql / 后端代码
-        ├─ ① 分阶段写入 output/{docs,sql,src}/*
-        ├─ ② 每完成一个阶段都 sessions_send(timeoutSeconds=0) → sys_arch
-        ├─ ③ 回传内容：阶段状态 + 摘要 + 产出路径 + 下一步建议
-        └─ ④ 不直接给 fe_coder 派正式下一阶段任务
-        ↓
-    sys_arch 收到后端阶段回传
-        ├─ ① 读取 be_coder 产出
-        ├─ ② 向飞书群同步“后端已完成什么”
-        ├─ ③ 必要时发送附件
-        ├─ ④ 更新 output/docs/协作状态汇总.md
-        └─ ⑤ sessions_send(timeoutSeconds=0) → fe_coder（传前端所需输入）
-        ↓
-    fe_coder 读取文件 → 实现前端页面与接口接入
-        ├─ ① 写入 output/src/*
-        ├─ ② 阶段完成 / 阻塞时 sessions_send(timeoutSeconds=0) → sys_arch
-        ├─ ③ 回传内容：阶段状态 + 摘要 + 产出路径 + 待联调项
-        └─ ④ 不依赖 announce 自动回群
-        ↓
-    sys_arch 收到前端阶段回传
-        ├─ ① 读取产出文件
-        ├─ ② 向飞书群同步“前端已完成什么”
-        ├─ ③ 更新 output/docs/协作状态汇总.md
-        └─ ④ 输出最终汇总
-        ↓
-    用户在飞书群聊中看到完整过程与阶段性进度
-```
-
-### 双向沟通链路（可靠版）
-
-```text
-be_coder 对需求或架构有疑问
-    └─ sessions_send(timeoutSeconds=0) → sys_arch（问题 + 影响范围 + 建议）
-       └─ sys_arch 统一回复并同步必要信息到飞书群
-
-fe_coder 对接口定义有疑问
-    └─ sessions_send(timeoutSeconds=0) → sys_arch（问题 + 涉及页面 + 所需确认项）
-       └─ sys_arch 视情况转问 be_coder，并统一同步结果
-```
-
----
 
 ## 五、观测 Agent 运行状态
 
@@ -847,341 +711,3 @@ fe_coder 对接口定义有疑问
 ~/.openclaw/agents/fe_coder/sessions/<sessionId>.jsonl
 ```
 
-#### 第一步：查看会话索引，找到 sessionId
-
-```bash
-# 列出 sys_arch 的所有会话（含 token 用量、时间等元数据）
-openclaw sessions --agent sys_arch --json
-
-# 或直接查看索引文件
-cat ~/.openclaw/agents/sys_arch/sessions/sessions.json | python3 -m json.tool
-```
-
-#### 第二步：读取消息内容
-
-```bash
-# 将 <sessionId> 替换为上一步找到的实际 ID
-cat ~/.openclaw/agents/sys_arch/sessions/<sessionId>.jsonl | \
-  python3 -c "
-import sys, json
-for line in sys.stdin:
-    line = line.strip()
-    if not line: continue
-    try:
-        obj = json.loads(line)
-        msg = obj.get('message', {})
-        role = msg.get('role', '?')
-        content = msg.get('content', '')
-        if isinstance(content, list):
-            content = ' '.join(
-                c.get('text', '') for c in content if isinstance(c, dict)
-            )
-        print(f'[{role}]')
-        print(str(content)[:500])
-        print('---')
-    except:
-        pass
-"
-```
-
-#### 一次查看三个 agent 的最新会话
-
-```bash
-for agent in sys_arch be_coder fe_coder; do
-  echo "========== $agent =========="
-  latest=$(ls -t ~/.openclaw/agents/$agent/sessions/*.jsonl 2>/dev/null | head -1)
-  if [ -z "$latest" ]; then
-    echo "（暂无会话记录）"
-  else
-    echo "文件：$latest"
-    wc -l "$latest"
-  fi
-  echo ""
-done
-```
-
----
-
-### 5.3 确认 agent 间是否成功通信
-
-sessions_send 产生的内部消息携带 `inter_session` 来源标记，可以直接在文件里检索：
-
-```bash
-# 检查 be_coder 是否收到过来自 sessions_send 的消息
-grep -l "inter_session" ~/.openclaw/agents/be_coder/sessions/*.jsonl
-
-# 查看该消息的来源详情
-grep "inter_session" ~/.openclaw/agents/be_coder/sessions/*.jsonl | \
-  python3 -c "
-import sys, json
-for line in sys.stdin:
-    parts = line.split(':', 1)
-    if len(parts) < 2: continue
-    try:
-        obj = json.loads(parts[1])
-        prov = obj.get('inputProvenance') or obj.get('message', {}).get('inputProvenance')
-        if prov:
-            print(json.dumps(prov, ensure_ascii=False, indent=2))
-            print('---')
-    except:
-        pass
-"
-```
-
-成功唤起时输出类似：
-
-```json
-{
-  "kind": "inter_session",
-  "sourceSessionKey": "agent:sys_arch:feishu:group:oc_xxxxxxxx",
-  "sourceTool": "sessions_send"
-}
-```
-
----
-
-### 5.4 检查文件是否落盘
-
-```bash
-# 查看各 agent 的产出文件
-for agent in sys_arch be_coder fe_coder; do
-  echo "========== $agent output =========="
-  find ~/.openclaw/workspace-$agent/output -type f 2>/dev/null || echo "（暂无产出）"
-  echo ""
-done
-```
-
----
-
-### 5.5 实时监控日志
-
-```bash
-# 实时过滤 agent 间调用相关日志
-tail -f ~/.openclaw/logs/openclaw.log | grep -E "sessions-send|inter_session|be_coder|fe_coder|sendAttachment"
-```
-
----
-
-## 六、完整 openclaw.json 示例
-
-```json
-{
-  "channels": {
-    "feishu": {
-      "enabled": true,
-      "dmPolicy": "pairing",
-      "accounts": {
-        "main": {
-          "appId": "<your-app-id>",
-          "appSecret": "<your-app-secret>",
-          "name": "My AI assistant"
-        }
-      }
-    }
-  },
-  "models": {
-    "mode": "merge",
-    "providers": {
-      "vllm": {
-        "baseUrl": "http://<your-vllm-host>/v1",
-        "apiKey": "dummy",
-        "api": "openai-completions",
-        "models": [
-          {
-            "id": "Qwen3.5-27B",
-            "name": "Qwen3.5-27B (vLLM)",
-            "reasoning": false,
-            "input": [
-              "text"
-            ],
-            "cost": {
-              "input": 0,
-              "output": 0,
-              "cacheRead": 0,
-              "cacheWrite": 0
-            },
-            "contextWindow": 131072,
-            "maxTokens": 8192
-          }
-        ]
-      }
-    }
-  },
-  "agents": {
-    "defaults": {
-      "model": {
-        "primary": "vllm/Qwen3.5-27B"
-      },
-      "workspace": "/home/lane/.openclaw/workspace",
-      "compaction": {
-        "mode": "safeguard"
-      }
-    },
-    "list": [
-      {
-        "id": "sys_arch",
-        "name": "系统架构师",
-        "workspace": "/home/lane/.openclaw/workspace-sys_arch",
-        "agentDir": "/home/lane/.openclaw/agents/sys_arch/agent",
-        "tools": {
-          "profile": "coding"
-        }
-      },
-      {
-        "id": "be_coder",
-        "name": "后端工程师",
-        "workspace": "/home/lane/.openclaw/workspace-be_coder",
-        "agentDir": "/home/lane/.openclaw/agents/be_coder/agent",
-        "tools": {
-          "profile": "coding"
-        }
-      },
-      {
-        "id": "fe_coder",
-        "name": "前端工程师",
-        "workspace": "/home/lane/.openclaw/workspace-fe_coder",
-        "agentDir": "/home/lane/.openclaw/agents/fe_coder/agent",
-        "tools": {
-          "profile": "coding"
-        }
-      },
-      {
-        "id": "main",
-        "name": "默认助手"
-      }
-    ]
-  },
-  "bindings": [
-    {
-      "comment": "系统设计群 → sys_arch",
-      "agentId": "sys_arch",
-      "match": {
-        "channel": "feishu",
-        "accountId": "main",
-        "peer": {
-          "kind": "group",
-          "id": "<系统设计群-group-id>"
-        }
-      }
-    },
-    {
-      "comment": "后端开发群 → be_coder",
-      "agentId": "be_coder",
-      "match": {
-        "channel": "feishu",
-        "accountId": "main",
-        "peer": {
-          "kind": "group",
-          "id": "<后端开发群-group-id>"
-        }
-      }
-    },
-    {
-      "comment": "前端开发群 → fe_coder",
-      "agentId": "fe_coder",
-      "match": {
-        "channel": "feishu",
-        "accountId": "main",
-        "peer": {
-          "kind": "group",
-          "id": "<前端开发群-group-id>"
-        }
-      }
-    },
-    {
-      "comment": "兜底 → main（私聊及未匹配任何群的消息由默认 agent 处理）",
-      "agentId": "main",
-      "match": {
-        "channel": "feishu",
-        "accountId": "main"
-      }
-    }
-  ],
-  "tools": {
-    "profile": "coding",
-    "agentToAgent": {
-      "enabled": true,
-      "allow": [
-        "sys_arch",
-        "be_coder",
-        "fe_coder"
-      ]
-    }
-  },
-  "commands": {
-    "native": "auto",
-    "nativeSkills": "auto",
-    "restart": true,
-    "ownerDisplay": "raw"
-  },
-  "session": {
-    "dmScope": "per-channel-peer"
-  },
-  "gateway": {
-    "port": 18789,
-    "mode": "local",
-    "bind": "loopback",
-    "auth": {
-      "mode": "token",
-      "token": "<your-gateway-token>"
-    },
-    "tailscale": {
-      "mode": "off",
-      "resetOnExit": false
-    },
-    "nodes": {
-      "denyCommands": [
-        "camera.snap",
-        "camera.clip",
-        "screen.record",
-        "contacts.add",
-        "calendar.add",
-        "reminders.add",
-        "sms.send"
-      ]
-    }
-  }
-}
-```
-
-> **注意**：上面的完整示例中 `bindings` 已经放在顶层（与 `agents` 平级），这是正确的位置。
-
----
-
-## 七、工作区目录结构一览
-
-部署完成后，各 agent 工作区的文件结构如下：
-
-```
-~/.openclaw/workspace-sys_arch/
-├── SOUL.md              ← 人格与职责定义
-├── AGENTS.md            ← 操作规范（落盘、通信、安全）
-├── IDENTITY.md          ← 名称与 emoji（🏗️ 系统架构师）
-├── output/
-│   └── docs/
-│       ├── 功能说明文档.md      ← 运行时生成
-│       ├── 后端架构设计.md      ← 运行时生成
-│       └── 前端架构设计.md      ← 运行时生成
-
-~/.openclaw/workspace-be_coder/
-├── SOUL.md
-├── AGENTS.md
-├── IDENTITY.md          ← ⚙️ 后端工程师
-├── output/
-│   ├── docs/
-│   │   └── 接口设计文档.md      ← 运行时生成
-│   ├── sql/
-│   │   └── init.sql             ← 运行时生成
-│   └── src/
-│       └── (Java Spring Boot 项目结构)
-
-~/.openclaw/workspace-fe_coder/
-├── SOUL.md
-├── AGENTS.md
-├── IDENTITY.md          ← 🎨 前端工程师
-├── output/
-│   └── src/
-│       └── (React/Vue 项目结构)
-```
-
----
